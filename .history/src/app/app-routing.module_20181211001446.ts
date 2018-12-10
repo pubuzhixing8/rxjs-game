@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { BreakoutComponent } from './breakout/breakout.component';
+import {  } from './breakout/breakout.component';
 
 const routes: Routes = [
-  { path: 'breakout', component: BreakoutComponent }
+  { path: 'breakout', component:  }
 ];
 
 @NgModule({
