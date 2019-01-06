@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { BreakoutCanvasService } from './breakout-canvas.service';
+import { BreakoutService } from './breakout.service';
 
 @Component({
   selector: 'app-breakout',
@@ -12,7 +13,8 @@ export class BreakoutComponent implements OnInit, AfterViewInit {
   stage: ElementRef;
 
   constructor(
-    public canvasService: BreakoutCanvasService
+    public canvasService: BreakoutCanvasService,
+    public breakoutService: BreakoutService
   ) { }
 
 
@@ -22,5 +24,6 @@ export class BreakoutComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const stageCanvas = this.stage.nativeElement;
     this.canvasService.init(stageCanvas);
+    this.breakoutService.ready();
   }
 }
