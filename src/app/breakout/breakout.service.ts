@@ -7,7 +7,9 @@ import {
   withLatestFrom,
   merge as OperatorMerge,
   retryWhen,
-  delay
+  delay,
+  filter,
+  tap
 } from 'rxjs/operators';
 import { animationFrame } from 'rxjs/internal/scheduler/animationFrame';
 import { BreakoutCanvasService } from './breakout-canvas.service';
@@ -65,10 +67,15 @@ export class BreakoutService {
 
   key$ = merge(
     fromEvent(document, 'keydown').pipe(
+      // filter(event => event['key'] !== ),
       map(event => this.PADDLE_CONTROLS[event['key']] || 0)
     ),
     fromEvent(document, 'keyup').pipe(map(event => 0))
-  ).pipe(distinctUntilChanged());
+  ).pipe(distinctUntilChanged(),
+    tap((data) => {
+      // console.log('' + data);
+    })
+  );
 
   createPaddle$ = (ticker$: Observable<{ time: number; deltaTime: any }>) =>
     ticker$.pipe(
@@ -92,9 +99,9 @@ export class BreakoutService {
       ball.position.x > paddle - this.PADDLE_WIDTH / 2 &&
       ball.position.x < paddle + this.PADDLE_WIDTH / 2 &&
       ball.position.y >
-        this.breakoutCanvasService.stage.height -
-          this.PADDLE_HEIGHT -
-          this.BALL_RADIUS / 2
+      this.breakoutCanvasService.stage.height -
+      this.PADDLE_HEIGHT -
+      this.BALL_RADIUS / 2
     );
   }
 
@@ -187,7 +194,7 @@ export class BreakoutService {
         if (
           ball.position.x < this.BALL_RADIUS ||
           ball.position.x >
-            this.breakoutCanvasService.stage.width - this.BALL_RADIUS
+          this.breakoutCanvasService.stage.width - this.BALL_RADIUS
         ) {
           ball.direction.x = -ball.direction.x;
           collisions.wall = true;
@@ -240,7 +247,7 @@ export class BreakoutService {
       .subscribe((data) => { this.updateView(data); });
   }
 
-  constructor(private breakoutCanvasService: BreakoutCanvasService) {}
+  constructor(private breakoutCanvasService: BreakoutCanvasService) { }
 }
 
 export class Brick {
