@@ -33,7 +33,7 @@ export class BreakoutService {
     })),
     scan((previous, current) => ({
       time: current.time,
-      deltaTime: current.time - previous.time
+      deltaTime: (current.time - previous.time) / 1000
     }))
   );
   PADDLE_CONTROLS = {
