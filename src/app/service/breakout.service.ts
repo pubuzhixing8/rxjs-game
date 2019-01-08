@@ -23,7 +23,7 @@ export class BreakoutService {
 
   BALL_SPEED = 60;
 
-  restart: Subject<any>;
+  restart: Subject<any>; // 借用restart.error 方法终止流控制游戏结束
 
   PADDLE_CONTROLS = {
     ArrowLeft: -1,
@@ -39,44 +39,45 @@ export class BreakoutService {
       time: current.time,
       deltaTime: (current.time - previous.time) / 1000
     }))
-  );
+  ); // Observable单播 每次订阅都是启动一个新的定时器
 
   key$ = merge(
     fromEvent(document, 'keydown').pipe(
       map(event => this.PADDLE_CONTROLS[event['key']] || 0)
     ),
     fromEvent(document, 'keyup').pipe(map(event => 0))
-  ).pipe(
-    distinctUntilChanged()
-  );
+  ).pipe(distinctUntilChanged()); // 提供方位的数据源
 
   game$ = Observable.create(observer => {
     this.breakoutCanvasService.drawIntro();
     this.restart = new Subject();
-    const paddle$ = this.createPaddle$(this.ticker$);
+    const paddle$ = this.createPaddle$(this.ticker$); // 数据源吐出船桨的位置
     const state$ = this.createState$(this.ticker$, paddle$);
     this.ticker$
       .pipe(
         withLatestFrom(paddle$, state$),
         OperatorMerge(this.restart)
       )
-      .subscribe(observer);
+      .subscribe(observer); // 这个this.ticker$ 也可以不使用，直接通过merge合并后面两个数据流
   });
 
   createPaddle$(ticker$: Observable<{ time: number; deltaTime: any }>) {
     return ticker$.pipe(
-      withLatestFrom(this.key$),
-      scan<any[], number>((position: number, [ticker, direction]) => {
-        const nextPosition =
-          position + direction * ticker.deltaTime * this.PADDLE_SPEED;
-        return Math.max(
-          Math.min(
-            nextPosition,
-            this.breakoutCanvasService.stage.width - config.PADDLE_WIDTH / 2
-          ),
-          config.PADDLE_WIDTH / 2
-        );
-      }, this.breakoutCanvasService.stage.width / 2),
+      withLatestFrom(this.key$), // withLatestFrom操作符 作为游戏开始的触发条件，只有这个数据流产生产生数据才会往下游流动
+      scan<[{ deltaTime: number; time: number }, number], number>(
+        (position: number, [ticker, direction]) => {
+          const nextPosition =
+            position + direction * ticker.deltaTime * this.PADDLE_SPEED;
+          return Math.max(
+            Math.min(
+              nextPosition,
+              this.breakoutCanvasService.stage.width - config.PADDLE_WIDTH / 2
+            ),
+            config.PADDLE_WIDTH / 2
+          );
+        },
+        this.breakoutCanvasService.stage.width / 2
+      ),
       distinctUntilChanged()
     );
   }
@@ -84,14 +85,17 @@ export class BreakoutService {
   createState$(ticker$, paddle$) {
     return ticker$.pipe(
       withLatestFrom(paddle$),
-      scan<any[], { ball: Ball, bricks: Brick[], score: number}>(({ ball, bricks, score }, [ticker, paddle]) => {
+      scan<
+        [{ deltaTime: number; time: number }, number],
+        { ball: Ball; bricks: Brick[]; score: number }
+      >(({ ball, bricks, score }, [ticker, paddle]) => {
         const remainingBricks = [];
         const collisions = {
-          paddle: false,
-          floor: false,
-          wall: false,
-          ceiling: false,
-          brick: false
+          paddle: false, // 球撞船桨
+          floor: false, //
+          wall: false, // 撞墙
+          ceiling: false, // 撞顶
+          brick: false // 球撞砖块
         };
 
         ball.position.x =
@@ -178,6 +182,11 @@ export class BreakoutService {
     return bricks;
   }
 
+  /**
+   * 球碰撞墙船桨
+   * @param paddle 船桨位置
+   * @param ball 球
+   */
   isHit(paddle: number, ball: Ball) {
     return (
       ball.position.x > paddle - config.PADDLE_WIDTH / 2 &&
@@ -190,7 +199,7 @@ export class BreakoutService {
   }
 
   /**
-   * collision 碰撞冲突
+   * collision 碰撞砖块
    * @param brick 砖块
    * @param ball 球
    */
