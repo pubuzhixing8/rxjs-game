@@ -43,15 +43,11 @@ export class BreakoutService {
 
   key$ = merge(
     fromEvent(document, 'keydown').pipe(
-      // filter(event => event['key'] !== ),
       map(event => this.PADDLE_CONTROLS[event['key']] || 0)
     ),
     fromEvent(document, 'keyup').pipe(map(event => 0))
   ).pipe(
-    distinctUntilChanged(),
-    tap(data => {
-      // console.log('' + data);
-    })
+    distinctUntilChanged()
   );
 
   game$ = Observable.create(observer => {
