@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from '@angular/core';
-import { BreakoutCanvasService } from './breakout/breakout-canvas.service';
-import { BreakoutService } from './breakout/breakout.service';
+import { BreakoutCanvasService } from './service/breakout-canvas.service';
+import { BreakoutService } from './service/breakout.service';
 
 @Component({
   selector: 'app-root',

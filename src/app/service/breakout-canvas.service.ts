@@ -1,21 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BreakoutService } from './breakout.service';
+import { config } from '../config';
 
 @Injectable()
 export class BreakoutCanvasService {
 
     context: any;
     stage: any;
-
-    PADDLE_WIDTH = 100; // 浆
-    PADDLE_HEIGHT = 20;
-
-    BALL_RADIUS = 10; // 球
-
-    BRICK_ROWS = 5; // 砖
-    BRICK_COLUMNS = 7;
-    BRICK_HEIGHT = 20;
-    BRICK_GAP = 3; // 间隙
 
     public init(canvas: any): void {
         this.stage = canvas;
@@ -40,16 +30,16 @@ export class BreakoutCanvasService {
     public drawScore(score: number) {
         this.context.textAlign = 'left';
         this.context.font = '24px Courier New';
-        this.context.fillText(score, this.BRICK_GAP, 16);
+        this.context.fillText(score, config.BRICK_GAP, 16);
     }
 
     public drawPaddle(position) {
         this.context.beginPath();
         this.context.rect(
-            position - this.PADDLE_WIDTH / 2,
-            this.context.canvas.height - this.PADDLE_HEIGHT,
-            this.PADDLE_WIDTH,
-            this.PADDLE_HEIGHT
+            position - config.PADDLE_WIDTH / 2,
+            this.context.canvas.height - config.PADDLE_HEIGHT,
+            config.PADDLE_WIDTH,
+            config.PADDLE_HEIGHT
         );
         this.context.fill();
         this.context.closePath();
@@ -57,7 +47,7 @@ export class BreakoutCanvasService {
 
     public drawBall(ball: any) {
         this.context.beginPath();
-        this.context.arc(ball.position.x, ball.position.y, this.BALL_RADIUS, 0, Math.PI * 2);
+        this.context.arc(ball.position.x, ball.position.y, config.BALL_RADIUS, 0, Math.PI * 2);
         this.context.fill();
         this.context.closePath();
     }
