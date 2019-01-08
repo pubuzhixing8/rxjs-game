@@ -128,7 +128,11 @@ export class BreakoutService {
         collisions.ceiling = ball.position.y < config.BALL_RADIUS;
 
         if (collisions.brick || collisions.paddle || collisions.ceiling) {
-          ball.direction.y = -ball.direction.y;
+          if (collisions.paddle) {
+            ball.direction.y = -Math.abs(ball.direction.y);
+          } else {
+            ball.direction.y = -ball.direction.y;
+          }
         }
 
         return {
