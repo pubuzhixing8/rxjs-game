@@ -1,4 +1,5 @@
-# TinyGame
+# TinyGame 
+在线体验地址：http://tiny.pubuzhixing.com/
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.1.2.
 
