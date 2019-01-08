@@ -70,7 +70,7 @@ export class BreakoutService {
   createPaddle$(ticker$: Observable<{ time: number; deltaTime: any }>) {
     return ticker$.pipe(
       withLatestFrom(this.key$),
-      scan<any, number>((position: number, [ticker, direction]) => {
+      scan<any[], number>((position: number, [ticker, direction]) => {
         const nextPosition =
           position + direction * ticker.deltaTime * this.PADDLE_SPEED;
         return Math.max(
@@ -88,7 +88,7 @@ export class BreakoutService {
   createState$(ticker$, paddle$) {
     return ticker$.pipe(
       withLatestFrom(paddle$),
-      scan<any, any>(({ ball, bricks, score }, [ticker, paddle]) => {
+      scan<any[], { ball: Ball, bricks: Brick[], score: number}>(({ ball, bricks, score }, [ticker, paddle]) => {
         const remainingBricks = [];
         const collisions = {
           paddle: false,

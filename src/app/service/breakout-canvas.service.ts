@@ -17,7 +17,7 @@ export class BreakoutCanvasService {
         this.context.clearRect(0, 0, this.stage.width, this.stage.height);
         this.context.textAlign = 'center';
         this.context.font = '24px Courier New';
-        this.context.fillText('Press [<] and [>]', this.stage.width / 2, this.stage.height / 2);
+        this.context.fillText('Please Press [<] and [>]', this.stage.width / 2, this.stage.height / 2);
     }
 
     public drawGameOver(text) {
