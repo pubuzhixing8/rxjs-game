@@ -29,8 +29,8 @@ export class BreakoutCanvasService {
 
     public drawScore(score: number) {
         this.context.textAlign = 'left';
-        this.context.font = '24px Courier New';
-        this.context.fillText(score, config.BRICK_GAP, 16);
+        this.context.font = '20px Courier New';
+        this.context.fillText(`得分：${score}`, config.BRICK_GAP, 20);
     }
 
     public drawPaddle(position) {
